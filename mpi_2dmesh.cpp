@@ -416,6 +416,27 @@ recvStridedBuffer(float *dstBuf,
 // that performs sobel filtering
 // suggest using your cpu code from HW5, no OpenMP parallelism 
 //
+float
+sobel_filtered_pixel(float *s, int i, int j , int ncols, int nrows, float *gx, float *gy)
+{
+
+   if (i == 0 || i == ncols - 1 || j == 0 || j == nrows - 1) {
+        return 0.0f;
+    }
+
+    float gx_out = 0.0f;
+    float gy_out = 0.0f;
+    int count = 0;
+    for (int i2 = i - 1; i2 <= i + 1; i2++) {
+        for (int j2 = j - 1; j2 <= j + 1; j2++) {
+            float val_to_add = s[j2 * ncols + i2];
+            gx_out += val_to_add * gx[count];
+            gy_out += val_to_add * gy[count++];
+        }
+    }
+
+   return fmin(sqrt(gx_out * gx_out + gy_out * gy_out), 1.0f);
+}
 
 
 void
