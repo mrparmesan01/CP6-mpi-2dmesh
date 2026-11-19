@@ -1,0 +1,66 @@
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+Hello world, I'm rank 2 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 1 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 3 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 0 of 4 total ranks running on <nid200025>
+
+
+Timing results from rank 0: 
+	Scatter time:	52.3317 (ms) 
+	Sobel time:	63.8025 (ms) 
+	Gather time:	35.4262 (ms) 
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+Hello world, I'm rank 3 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 1 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 0 of 4 total ranks running on <nid200025>
+
+
+Timing results from rank 0: 
+	Scatter time:	50.4560 (ms) 
+	Sobel time:	63.8396 (ms) 
+	Gather time:	42.7467 (ms) 
+Hello world, I'm rank 2 of 4 total ranks running on <nid200025>
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+Hello world, I'm rank 1 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 2 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 3 of 4 total ranks running on <nid200025>
+Hello world, I'm rank 0 of 4 total ranks running on <nid200025>
+
+
+Timing results from rank 0: 
+	Scatter time:	47.6098 (ms) 
+	Sobel time:	63.6899 (ms) 
+	Gather time:	39.6236 (ms) 
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+Hello world, I'm rank 8 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 1 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 3 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 4 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 6 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 7 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 2 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 5 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 0 of 9 total ranks running on <nid200025>
+
+
+Timing results from rank 0: 
+	Scatter time:	41.7736 (ms) 
+	Sobel time:	28.4695 (ms) 
+	Gather time:	28.5214 (ms) 
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+Hello world, I'm rank 2 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 3 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 4 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 8 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 5 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 7 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 1 of 9 total ranks running on <nid200025>
+Hello world, I'm rank 0 of 9 total ranks running on <nid200025>
+
+
+Timing results from rank 0: 
+	Scatter time:	48.3500 (ms) 
+	Sobel time:	28.4699 (ms) 
+	Gather time:	32.4653 (ms) 
+Hello world, I'm rank 6 of 9 total ranks running on <nid200025>
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
