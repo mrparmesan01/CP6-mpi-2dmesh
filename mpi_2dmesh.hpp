@@ -78,6 +78,7 @@ class Tile2D
    int xloc, yloc; // x,y location in global grid wrt (0,0) in global grid
 
    int width, height; // dimensions of tile base grid
+   int halo_width, halo_height;
    int ghost_xmin, ghost_xmax, ghost_ymin, ghost_ymax;
 
    int tileRank;      // rank id owner of this tile
@@ -92,6 +93,8 @@ class Tile2D
       yloc = ty;
       width = xsize;  // specify the width, height of the tile's base grid/buffer
       height = ysize;
+      halo_width = width;
+      halo_height = height;
       tileRank = rank;
       ghost_xmin = ghost_xmax = ghost_ymin = ghost_ymax = 0;
 
