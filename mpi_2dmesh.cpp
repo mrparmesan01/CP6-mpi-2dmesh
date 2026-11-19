@@ -387,6 +387,39 @@ sendStridedBuffer(float *srcBuf,
    // srcBuf by the values specificed by srcOffsetColumn, srcOffsetRow.
    //
 
+   int rank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+   if (rank != fromRank) return;
+
+   /**
+   * @brief Calculate the size of the data to be sent and send it using MPI_Send.
+   * 
+   * If the size of the data to be sent is equal to the size of the source buffer, send the entire buffer.
+   * Otherwise, create a subregion buffer and copy the relevant data from the source buffer into it before sending.
+   */
+   int sendSize = sendWidth * sendHeight;
+   if (sendSize == srcWidth * srcHeight) {
+      MPI_Send(srcBuf, sendSize, MPI_FLOAT, toRank, 0, MPI_COMM_WORLD);
+      return;
+   }
+
+   // create buffer for subregion
+   std::vector<float> subregion(sendSize);
+   float* bufPtr = subregion.data();
+
+   long srcOffsetPos = srcOffsetRow * srcWidth + srcOffsetColumn;
+
+   for (int i = 0; i < sendHeight; i++) {
+      long idx = srcOffsetPos + i * srcWidth;
+      long remainingSpace = srcWidth * srcHeight - idx;
+
+      memcpy(&bufPtr[i * sendWidth],
+            &srcBuf[idx],
+            fmin(sendWidth, remainingSpace) * sizeof(float));
+   }
+
+   MPI_Send(subregion.data(), sendSize, MPI_FLOAT, toRank, 0, MPI_COMM_WORLD);
+
 }
 
 void
@@ -407,6 +440,40 @@ recvStridedBuffer(float *dstBuf,
    // values. This incoming data is to be placed into the subregion of dstBuf that has an origin
    // at dstOffsetColumn, dstOffsetRow, and that is expectedWidth, expectedHeight in size.
    //
+
+   // only send from certain rank
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (rank != toRank) return;
+    //printf("recvStridedBuffer called from rank %d\n", rank);
+    
+    // create buffer for subregion
+    int expectedSize = expectedWidth * expectedHeight;
+    std::vector<float> subregion(expectedSize);
+    float* bufPtr = subregion.data();
+
+    MPI_Recv(subregion.data(), expectedSize, MPI_FLOAT, fromRank, 0, MPI_COMM_WORLD, &stat);
+
+    if (expectedSize == dstWidth * dstHeight) {
+        memcpy(dstBuf, subregion.data(), expectedSize * sizeof(float));
+        return;
+    }
+
+    long dstOffsetPos = dstOffsetRow * dstWidth + dstOffsetColumn;
+    
+    /**
+    * @brief Copy the received subregion into the destination buffer at the specified offset.
+    * 
+    * This loop iterates over each row of the received subregion and copies it into the destination buffer
+    */
+    for (int i = 0; i < expectedHeight; i++) {
+        long idx = dstOffsetPos + i * dstWidth;
+        long remainingSpace = dstWidth * dstHeight - idx;
+
+        memcpy(&dstBuf[idx],
+               &bufPtr[i * expectedWidth],
+               fmin(expectedWidth, remainingSpace) * sizeof(float));
+    }
 
 }
 
@@ -438,6 +505,19 @@ sobel_filtered_pixel(float *s, int i, int j , int ncols, int nrows, float *gx, f
    return fmin(sqrt(gx_out * gx_out + gy_out * gy_out), 1.0f);
 }
 
+void
+do_sobel_filtering(float *in, float *out, int ncols, int nrows)
+{
+    float Gx[] = {1.0, 0.0, -1.0, 2.0, 0.0, -2.0, 1.0, 0.0, -1.0};
+    float Gy[] = {1.0, 2.0, 1.0, 0.0, 0.0, 0.0, -1.0, -2.0, -1.0};
+
+    off_t nvals = ncols * nrows;
+
+    for (off_t i = 0; i < nvals; i++) {
+        out[i] = sobel_filtered_pixel(in, i % ncols, i / ncols, ncols, nrows, Gx, Gy);
+    }
+}
+
 
 void
 sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
@@ -460,6 +540,7 @@ sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
 #endif
          // ADD YOUR CODE HERE
          // to call your sobel filtering code on each tile
+           do_sobel_filtering(t->inputBuffer.data(), t->outputBuffer.data(), t->width, t->height);
          }
       }
    }
